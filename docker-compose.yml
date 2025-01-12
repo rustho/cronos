@@ -1,0 +1,11 @@
+version: "3.8"
+
+services:
+  health-checker:
+    build: .
+    container_name: api-health-checker
+    restart: unless-stopped
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./logs:/app/logs
