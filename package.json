@@ -1,18 +1,19 @@
 {
-  "name": "api-health-checker",
+  "name": "cronos",
   "version": "1.0.0",
-  "description": "API health checker with cron scheduling",
-  "main": "src/index.js",
+  "main": "index.js",
   "scripts": {
     "start": "node src/index.js",
-    "docker:build": "docker build -t api-health-checker .",
-    "docker:run": "docker run -d --name api-health-checker api-health-checker",
-    "docker:compose": "docker-compose up -d",
-    "docker:logs": "docker logs api-health-checker"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
   "dependencies": {
-    "axios": "^1.6.7",
-    "dotenv": "^16.4.1",
+    "axios": "^1.7.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "node-cron": "^3.0.3"
   }
 }

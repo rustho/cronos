@@ -1,8 +1,12 @@
+const express = require("express");
 const cron = require("node-cron");
 const axios = require("axios");
 const fs = require("fs");
 const path = require("path");
 require("dotenv").config();
+
+const app = express();
+const PORT = process.env.PORT || 3000;
 
 // Create logs directory if it doesn't exist
 const logsDir = path.join(__dirname, "../logs");
@@ -63,3 +67,42 @@ cron.schedule("0 20 * * *", () => {
 performHealthChecks();
 
 logToFile("Health checker started. Monitoring APIs every evening at 8 PM Bali time (UTC+8).");
+
+// Add basic endpoints
+app.get("/", (req, res) => {
+  res.json({ message: "Health checker service is running" });
+});
+
+app.get("/health", (req, res) => {
+  res.json({ status: "healthy" });
+});
+
+// Add endpoint to trigger health checks manually
+app.post("/trigger-health-check", async (req, res) => {
+  try {
+    await performHealthChecks();
+    res.json({ message: "Health checks triggered successfully" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to perform health checks" });
+  }
+});
+
+// Add endpoint to get latest health check results
+app.get("/health-check-results", (req, res) => {
+  const date = new Date().toISOString().split('T')[0];
+  const logFile = path.join(logsDir, `health-check-${date}.log`);
+  
+  try {
+    const logs = fs.existsSync(logFile) 
+      ? fs.readFileSync(logFile, 'utf8')
+      : "No health checks performed today";
+    res.json({ logs: logs.split('\n') });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to retrieve health check logs" });
+  }
+});
+
+// Start the server
+app.listen(PORT, () => {
+  logToFile(`Server started on port ${PORT}`);
+});
